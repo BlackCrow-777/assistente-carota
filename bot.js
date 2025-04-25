@@ -1,4 +1,4 @@
-﻿// Importa il modulo tmi.js e il modulo fs
+// Importa il modulo tmi.js e il modulo fs
 const tmi = require('tmi.js');
 const fs = require('fs');
 
@@ -77,6 +77,12 @@ function scegliSaluto(username) {
   return messaggiPossibili[Math.floor(Math.random() * messaggiPossibili.length)].replace('{username}', username);
 }
 
+// Oggetto per tracciare quando ogni utente ha scritto "bun bun"
+const bunbunCooldowns = {};
+
+// Tempo di cooldown in millisecondi (2 secondi)
+const cooldownTime = 2000;
+
 // Quando il bot si connette al canale
 client.on('connected', (address, port) => {
   console.log(`Connesso a ${address}:${port}`);
@@ -126,10 +132,20 @@ client.on('message', (channel, tags, message, self) => {
     client.say(channel, risposteDormire[Math.floor(Math.random() * risposteDormire.length)]);
   }
 
-  // Comando !bunbun o "bun bun" o "bunbun" in un messaggio
+  // Comando !bunbun o "bun bun" o "bunbun" in un messaggio con cooldown
   if (message.toLowerCase().includes('bun bun') || message.toLowerCase().includes('bunbun')) {
+    const currentTime = Date.now();
+
+    // Se l'utente ha scritto "bun bun" prima del cooldown
+    if (bunbunCooldowns[username] && currentTime - bunbunCooldowns[username] < cooldownTime) {
+      return; // Non fare nulla, il bot non invia messaggi
+    }
+
+    // Aggiorna il timestamp dell'utente per il cooldown
+    bunbunCooldowns[username] = currentTime;
+
+    // Incrementa il contatore dei bunbun
     bunBunCounter++;
     salvaContatore();
-    client.say(channel, `🐰 Bun Bun! Siamo a ${bunBunCounter} bun bun EVVIVA! 🎉`);
   }
 });
