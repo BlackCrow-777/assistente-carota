@@ -10,9 +10,9 @@ const options = {
   },
   identity: {
     username: 'assistentecarota_bot',
-    password: 'oauth:l0qghkz6ha7w1yihoj5bwbagoreslv',
+    password: process.env.TWITCH_OAUTH_TOKEN,
   },
-  channels: ['#bunnyhime_'],
+  channels: [process.env.TWITCH_CHANNEL_NAME],
 };
 
 // Crea un client tmi.js
